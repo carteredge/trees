@@ -5,8 +5,8 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
     </head>
     <body>
-        <div id="page-root"></div>
-
+        <div id="page-root"><h1>Click to plant trees.</h1></div>
+        
         <script>
             const GROWTH_DECAY = 0.68;
             const LEAF_RADIUS = 16;
@@ -160,6 +160,18 @@
         </script>
 
         <style>
+            h1 {
+                color: gray;
+                font-family: serif;
+                font-style: italic;
+                margin: 2rem auto;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                text-align: center;
+            }
+            
             .branch, .seed {
                 background-color: brown;
                 border-radius: 8px;
