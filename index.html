@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    </head>
+    <body>
+        <div id="page-root"></div>
+
+        <script>
+            const GROWTH_DECAY = 0.68;
+            const LEAF_RADIUS = 16;
+            const LEAF_SPROUT_RADIUS = 4;
+            const LONG_DELAY = 500;
+            const MAX_GROWTH = (window.innerHeight ?? window.offsetHeight) * 0.75;
+            const MIN_GROWTH = 50;
+            const SEED_RADIUS = 8;
+            const SHORT_DELAY = 50;
+            
+            function growBranch(tree, growthBase, direction, lastDirection="up") {
+                const maxGrowth = growthBase * GROWTH_DECAY;
+                // console.log(tree.offsetLeft, tree.offsetWidth, tree.offsetTop, tree.offsetHeight);
+                console.log(maxGrowth);
+                if (maxGrowth > MIN_GROWTH) {
+                    const growth = Math.max(Math.round(Math.random() * maxGrowth), SEED_RADIUS * 2);
+                    const branch = document.createElement("div");
+                    branch.className = "branch";
+                    switch (direction) {
+                        case "down":
+                            branch.style.top = `${SEED_RADIUS}px`;
+                            branch.style.left = `${Math.round(Math.random() * (tree.offsetWidth - 2 * SEED_RADIUS) + SEED_RADIUS)}px`;
+                            tree.append(branch);
+                            setTimeout(() => {
+                                branch.style.height = `${growth}px`;
+                                setTimeout(() => {
+                                    growBranch(branch, growth, Math.random() < 0.5 ? "left" : "right", direction);
+                                }, LONG_DELAY);
+                            }, SHORT_DELAY);
+                            break;
+                        case "left":
+                            branch.style.top = `${Math.round(Math.random() * (tree.offsetHeight - 2 * SEED_RADIUS) + SEED_RADIUS)}px`;
+                            branch.style.right = `${SEED_RADIUS}px`;
+                            tree.append(branch);
+                            setTimeout(() => {
+                                branch.style.width = `${growth}px`;
+                                setTimeout(() => {
+                                    growBranch(branch, growth, Math.random() < 0.5 ? "up" : "down", direction);
+                                }, LONG_DELAY);
+                            }, SHORT_DELAY);
+                            break;
+                        case "right":
+                            branch.style.top = `${Math.round(Math.random() * (tree.offsetHeight - 2 * SEED_RADIUS) + SEED_RADIUS)}px`;
+                            branch.style.left = `${SEED_RADIUS}px`;
+                            tree.append(branch);
+                            setTimeout(() => {
+                                branch.style.width = `${growth}px`;
+                                setTimeout(() => {
+                                    growBranch(branch, growth, Math.random() < 0.5 ? "up" : "down", direction);
+                                }, LONG_DELAY);
+                            }, SHORT_DELAY);
+                            break;
+                        case "up":
+                        default:
+                            branch.style.bottom = `${SEED_RADIUS}px`;
+                            branch.style.left = `${Math.round(Math.random() * (tree.offsetWidth - 2 * SEED_RADIUS) + SEED_RADIUS)}px`;
+                            tree.append(branch);
+                            setTimeout(() => {
+                                branch.style.height = `${growth}px`;
+                                setTimeout(() => {
+                                    growBranch(branch, growth, Math.random() < 0.5 ? "left" : "right", direction);
+                                }, LONG_DELAY);
+                            }, SHORT_DELAY);
+                            break;
+                    }
+                }
+                const leaf = document.createElement("div");
+                leaf.className = "leaf";
+                switch (lastDirection) {
+                    case "down":
+                        leaf.style.bottom = `${SEED_RADIUS - LEAF_SPROUT_RADIUS}px`;
+                        leaf.style.left = `${SEED_RADIUS - LEAF_SPROUT_RADIUS}px`;
+                        tree.append(leaf);
+                        setTimeout(() => {
+                            leaf.style.width = "32px";
+                            leaf.style.height = "32px";
+                            leaf.style.bottom = `${SEED_RADIUS - LEAF_RADIUS}px`;
+                            leaf.style.left = `${SEED_RADIUS - LEAF_RADIUS}px`;
+                        }, SHORT_DELAY);
+                        break;
+                    case "left":
+                        leaf.style.top = `${SEED_RADIUS - LEAF_SPROUT_RADIUS}px`;
+                        leaf.style.left = `${SEED_RADIUS - LEAF_SPROUT_RADIUS}px`;
+                        tree.append(leaf);
+                        setTimeout(() => {
+                            leaf.style.width = "32px";
+                            leaf.style.height = "32px";
+                            leaf.style.top = `${SEED_RADIUS - LEAF_RADIUS}px`;
+                            leaf.style.left = `${SEED_RADIUS - LEAF_RADIUS}px`;
+                        }, SHORT_DELAY);
+                        break;
+                    case "right":
+                        leaf.style.top = `${SEED_RADIUS - LEAF_SPROUT_RADIUS}px`;
+                        leaf.style.right = `${SEED_RADIUS - LEAF_SPROUT_RADIUS}px`;
+                        tree.append(leaf);
+                        setTimeout(() => {
+                            leaf.style.width = "32px";
+                            leaf.style.height = "32px";
+                            leaf.style.top = `${SEED_RADIUS - LEAF_RADIUS}px`;
+                            leaf.style.right = `${SEED_RADIUS - LEAF_RADIUS}px`;
+                        }, SHORT_DELAY);
+                        break;
+                    case "up":
+                    default:
+                        leaf.style.top = `${SEED_RADIUS - LEAF_SPROUT_RADIUS}px`;
+                        leaf.style.left = `${SEED_RADIUS - LEAF_SPROUT_RADIUS}px`;
+                        tree.append(leaf);
+                        setTimeout(() => {
+                            leaf.style.width = "32px";
+                            leaf.style.height = "32px";
+                            leaf.style.top = `${SEED_RADIUS - LEAF_RADIUS}px`;
+                            leaf.style.left = `${SEED_RADIUS - LEAF_RADIUS}px`;
+                        }, SHORT_DELAY);
+                        break;
+                }
+            }
+
+            function growSeed(seed) {
+                const seedTop = seed.offsetTop;
+                const seedBottom = seed.offsetTop + seed.offsetHeight;
+                const growth = Math.max(Math.round(Math.random() * MAX_GROWTH), MIN_GROWTH);
+                seed.style.height = `${growth}px`;
+
+                setTimeout(() => {
+                    growBranch(
+                        seed,
+                        growth,
+                        "left");
+                    growBranch(
+                        seed,
+                        growth,
+                        "right");
+                }, LONG_DELAY);
+            }
+
+            function plantSeed(event) {
+                const pageRoot = document.getElementById("page-root");
+                const seed = document.createElement("div");
+                seed.className = "seed";
+                seed.style.bottom = `${window.innerHeight - event.offsetY - SEED_RADIUS}px`;
+                seed.style.left = `${event.offsetX - SEED_RADIUS}px`;
+                pageRoot.appendChild(seed);
+                setTimeout(() => {
+                    seed.style.bottom = "0";
+                    seed.style.top = undefined;
+                    setTimeout(() => growSeed(seed), LONG_DELAY)
+                }, SHORT_DELAY);
+            }
+
+            document.getElementById("page-root").addEventListener("click", plantSeed);
+        </script>
+
+        <style>
+            .branch, .seed {
+                background-color: brown;
+                border-radius: 8px;
+                height: 16px;
+                position: absolute;
+                transition: all 0.5s ease-in 0s;
+                width: 16px;
+            }
+
+            .leaf {
+                background-color: green;
+                border-radius: 50%;
+                height: 8px;
+                position: absolute;
+                transition: all 0.5s ease-in 0s;
+                width: 8px;
+            }
+
+            #page-root {
+                bottom: 0;
+                left: 0;
+                right: 0;
+                overflow: hidden;
+                position: absolute;
+                top: 0;
+            }
+        </style>
+    </body>
+</html>
