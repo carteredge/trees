@@ -12,6 +12,13 @@
         
         <script>
             const BRANCH_DENSITY = 150;
+            const CLOUD_DELAY = 32000;
+            const CLOUD_INTERVAL_MAX = 5000;
+            const CLOUD_INTERVAL_MIN = 500;
+            const CLOUD_FLOOR = (window.innerHeight ?? window.offsetHeight) * 0.4;
+            const CLOUD_MAX_RADIUS = 100;
+            const CLOUD_MIN_RADIUS = 10;
+            const CLOUD_SIDE = (window.innerWidth ?? window.offsetWidth) * 0.2;
             const FADE = 0.85;
             const MIN_OPACITY = 0.03;
             const GROWTH_DECAY = 0.68;
@@ -31,6 +38,45 @@
                         element.remove();
                     }
                 }
+            }
+
+            function fluffCloud(cloud, parentDiameter) {
+                parentDiameter = parentDiameter || CLOUD_MAX_RADIUS * 2;
+
+                const isRoot = !cloud;
+                cloud = cloud ?? document.getElementById("page-root");
+
+                const left = isRoot ?
+                    cloud.offsetWidth - CLOUD_SIDE * Math.random() :
+                    (Math.random() - 0.5) * parentDiameter;
+                const fluff = document.createElement("div");
+                fluff.className = "cloud";
+                const diameter = Math.random() * Math.min(parentDiameter, CLOUD_MAX_RADIUS * 2);
+                fluff.style.top = `${Math.min(Math.random() * (isRoot ? cloud.offsetHeight : parentDiameter) - diameter / 2, CLOUD_FLOOR)}px`;
+                fluff.style.left = `${left}px`;
+                if (isRoot) {
+                    setTimeout(() => {
+                        fluff.style.height = `${diameter}px`;
+                        fluff.style.width = `${diameter}px`;
+                        fluff.style.left = `${CLOUD_SIDE * Math.random()}px`;
+                        fluff.style.opacity = 0.8;
+                    }, SHORT_DELAY);
+                    setTimeout(
+                        fluffCloud,
+                        (CLOUD_INTERVAL_MAX - CLOUD_INTERVAL_MIN)  * Math.random() + CLOUD_INTERVAL_MIN);
+                    setTimeout(() => {fluff.style.opacity = 0}, CLOUD_DELAY / 2);
+                    setTimeout(() => {fluff.remove()}, CLOUD_DELAY);
+                } else {
+                    setTimeout(() => {
+                        fluff.style.height = `${diameter}px`;
+                        fluff.style.width = `${diameter}px`;
+                    }, SHORT_DELAY);
+                }
+
+                cloud.append(fluff);
+
+                if (diameter / 2 > CLOUD_MIN_RADIUS)
+                    fluffCloud(fluff, diameter);
             }
 
             function getTop(element) {
@@ -201,6 +247,8 @@
             }
 
             document.getElementById("page-root").addEventListener("click", plantSeed);
+
+            fluffCloud();
         </script>
 
         <style>
@@ -228,6 +276,23 @@
                 position: absolute;
                 transition: all 0.5s ease-in 0s;
                 width: 16px;
+            }
+
+            .cloud {
+                background-color: #fff;
+                border-radius: 50%;
+                height: 0;
+                width: 0;
+                opacity: 0;
+                position: absolute;
+                transition: height 2s ease-out 0s,
+                    width 2s ease-out 0s,
+                    opacity 16s ease-in 0s,
+                    left 32s linear 0s;
+            }
+
+            .cloud .cloud {
+                opacity: 0.8;
             }
 
             .leaf {
