@@ -5,9 +5,15 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
     </head>
     <body>
-        <div id="page-root"><h1>Click to plant trees.</h1></div>
+        <div id="page-root">
+            <h1>Click to plant trees.</h1>
+            <span>(Refresh to start over.)</span>
+        </div>
         
         <script>
+            const BRANCH_DENSITY = 150;
+            const FADE = 0.9;
+            const MIN_OPACITY = 0.05;
             const GROWTH_DECAY = 0.68;
             const LEAF_RADIUS = 16;
             const LEAF_SPROUT_RADIUS = 4;
@@ -16,11 +22,19 @@
             const MIN_GROWTH = 50;
             const SEED_RADIUS = 8;
             const SHORT_DELAY = 50;
-            
+
+            function fadeForest() {
+                const flora = document.querySelectorAll("h1, span, .seed");
+                for (let element of flora) {
+                    element.style.opacity = (Number(window.getComputedStyle(element).opacity) * FADE).toString();
+                    if (Number(element.style.opacity) < MIN_OPACITY) {
+                        element.remove();
+                    }
+                }
+            }
+
             function growBranch(tree, growthBase, direction, lastDirection="up") {
                 const maxGrowth = growthBase * GROWTH_DECAY;
-                // console.log(tree.offsetLeft, tree.offsetWidth, tree.offsetTop, tree.offsetHeight);
-                console.log(maxGrowth);
                 if (maxGrowth > MIN_GROWTH) {
                     const growth = Math.max(Math.round(Math.random() * maxGrowth), SEED_RADIUS * 2);
                     const branch = document.createElement("div");
@@ -33,7 +47,7 @@
                             setTimeout(() => {
                                 branch.style.height = `${growth}px`;
                                 setTimeout(() => {
-                                    growBranch(branch, growth, Math.random() < 0.5 ? "left" : "right", direction);
+                                    growBranches(branch, growth, Math.random() < 0.5 ? "left" : "right", direction);
                                 }, LONG_DELAY);
                             }, SHORT_DELAY);
                             break;
@@ -44,7 +58,7 @@
                             setTimeout(() => {
                                 branch.style.width = `${growth}px`;
                                 setTimeout(() => {
-                                    growBranch(branch, growth, Math.random() < 0.5 ? "up" : "down", direction);
+                                    growBranches(branch, growth, Math.random() < 0.5 ? "up" : "down", direction);
                                 }, LONG_DELAY);
                             }, SHORT_DELAY);
                             break;
@@ -55,7 +69,7 @@
                             setTimeout(() => {
                                 branch.style.width = `${growth}px`;
                                 setTimeout(() => {
-                                    growBranch(branch, growth, Math.random() < 0.5 ? "up" : "down", direction);
+                                    growBranches(branch, growth, Math.random() < 0.5 ? "up" : "down", direction);
                                 }, LONG_DELAY);
                             }, SHORT_DELAY);
                             break;
@@ -67,7 +81,7 @@
                             setTimeout(() => {
                                 branch.style.height = `${growth}px`;
                                 setTimeout(() => {
-                                    growBranch(branch, growth, Math.random() < 0.5 ? "left" : "right", direction);
+                                    growBranches(branch, growth, Math.random() < 0.5 ? "left" : "right", direction);
                                 }, LONG_DELAY);
                             }, SHORT_DELAY);
                             break;
@@ -124,6 +138,13 @@
                 }
             }
 
+            function growBranches(tree, growthBase, direction, lastDirection) {
+                const count = Math.max(Math.round((growthBase / BRANCH_DENSITY) * Math.random()), 1);
+                for (let i = count; i--;) {
+                    growBranch(tree, growthBase, direction, lastDirection);
+                }
+            }
+
             function growSeed(seed) {
                 const seedTop = seed.offsetTop;
                 const seedBottom = seed.offsetTop + seed.offsetHeight;
@@ -131,11 +152,11 @@
                 seed.style.height = `${growth}px`;
 
                 setTimeout(() => {
-                    growBranch(
+                    growBranches(
                         seed,
                         growth,
                         "left");
-                    growBranch(
+                    growBranches(
                         seed,
                         growth,
                         "right");
@@ -143,6 +164,7 @@
             }
 
             function plantSeed(event) {
+                fadeForest();
                 const pageRoot = document.getElementById("page-root");
                 const seed = document.createElement("div");
                 seed.className = "seed";
@@ -160,8 +182,13 @@
         </script>
 
         <style>
-            h1 {
-                color: gray;
+            body {
+                background-color: #bdf;
+            }
+
+            h1, span {
+                color: #048;
+                display: block;
                 font-family: serif;
                 font-style: italic;
                 margin: 2rem auto;
@@ -171,9 +198,9 @@
                 user-select: none;
                 text-align: center;
             }
-            
+
             .branch, .seed {
-                background-color: brown;
+                background-color: #842;
                 border-radius: 8px;
                 height: 16px;
                 position: absolute;
@@ -182,7 +209,7 @@
             }
 
             .leaf {
-                background-color: green;
+                background-color: #482;
                 border-radius: 50%;
                 height: 8px;
                 position: absolute;
