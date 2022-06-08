@@ -33,10 +33,20 @@
                 }
             }
 
+            function getTop(element) {
+                let top = 0;
+                do {
+                    if (!isNaN(element.offsetTop)) {
+                        top += element.offsetTop;
+                    }
+                } while(element = element.offsetParent);
+                return top;
+            }
+
             function growBranch(tree, growthBase, direction, lastDirection="up") {
                 const maxGrowth = growthBase * GROWTH_DECAY;
                 if (maxGrowth > MIN_GROWTH) {
-                    const growth = Math.max(Math.round(Math.random() * maxGrowth), SEED_RADIUS * 2);
+                    let growth = Math.round(Math.random() * maxGrowth);
                     const branch = document.createElement("div");
                     branch.className = "branch";
                     switch (direction) {
@@ -45,6 +55,9 @@
                             branch.style.left = `${Math.round(Math.random() * (tree.offsetWidth - 2 * SEED_RADIUS) + SEED_RADIUS)}px`;
                             tree.append(branch);
                             setTimeout(() => {
+                                const pageRoot = document.getElementById("page-root");
+                                const altitudeAdjustment = (getTop(branch) - branch.offsetHeight / 2) / pageRoot.offsetHeight;
+                                growth = Math.max(growth * altitudeAdjustment, SEED_RADIUS * 2);
                                 branch.style.height = `${growth}px`;
                                 setTimeout(() => {
                                     growBranches(branch, growth, Math.random() < 0.5 ? "left" : "right", direction);
@@ -56,6 +69,9 @@
                             branch.style.right = `${SEED_RADIUS}px`;
                             tree.append(branch);
                             setTimeout(() => {
+                                const pageRoot = document.getElementById("page-root");
+                                const altitudeAdjustment = (getTop(branch) - branch.offsetHeight / 2) / pageRoot.offsetHeight;
+                                growth = Math.max(growth * altitudeAdjustment, SEED_RADIUS * 2);
                                 branch.style.width = `${growth}px`;
                                 setTimeout(() => {
                                     growBranches(branch, growth, Math.random() < 0.5 ? "up" : "down", direction);
@@ -67,6 +83,9 @@
                             branch.style.left = `${SEED_RADIUS}px`;
                             tree.append(branch);
                             setTimeout(() => {
+                                const pageRoot = document.getElementById("page-root");
+                                const altitudeAdjustment = (getTop(branch) - branch.offsetHeight / 2) / pageRoot.offsetHeight;
+                                growth = Math.max(growth * altitudeAdjustment, SEED_RADIUS * 2);
                                 branch.style.width = `${growth}px`;
                                 setTimeout(() => {
                                     growBranches(branch, growth, Math.random() < 0.5 ? "up" : "down", direction);
@@ -79,6 +98,9 @@
                             branch.style.left = `${Math.round(Math.random() * (tree.offsetWidth - 2 * SEED_RADIUS) + SEED_RADIUS)}px`;
                             tree.append(branch);
                             setTimeout(() => {
+                                const pageRoot = document.getElementById("page-root");
+                                const altitudeAdjustment = (getTop(branch) - branch.offsetHeight / 2) / pageRoot.offsetHeight;
+                                growth = Math.max(growth * altitudeAdjustment, SEED_RADIUS * 2);
                                 branch.style.height = `${growth}px`;
                                 setTimeout(() => {
                                     growBranches(branch, growth, Math.random() < 0.5 ? "left" : "right", direction);
