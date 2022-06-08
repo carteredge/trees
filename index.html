@@ -10,7 +10,7 @@
         <div id="cloudscape"></div>
         <div id="page-root">
             <h1>Click to plant trees.</h1>
-            <span>(Refresh to start over.)</span>
+            <span>(Press F11 to enter/exist full screen. Refresh to start over.)</span>
         </div>
         
         <script>
@@ -72,6 +72,7 @@
                 fluff.style.top = `${Math.random() * Math.min((isRoot ? cloud.offsetHeight : parentDiameter) - diameter / 2, CLOUD_FLOOR)}px`;
                 fluff.style.left = `${left}px`;
                 if (isRoot) {
+                    // fluff.addEventListener("click", () => { fluffCloud(fluff, diameter); });
                     setTimeout(() => {
                         fluff.style.height = `${diameter}px`;
                         fluff.style.width = `${diameter}px`;
@@ -81,8 +82,8 @@
                     setTimeout(
                         fluffCloud,
                         (CLOUD_INTERVAL_MAX - CLOUD_INTERVAL_MIN)  * Math.random() + CLOUD_INTERVAL_MIN);
-                    setTimeout(() => {fluff.style.opacity = 0}, CLOUD_DELAY / 2);
-                    setTimeout(() => {fluff.remove()}, CLOUD_DELAY);
+                    setTimeout(() => { fluff.style.opacity = 0 }, CLOUD_DELAY / 2);
+                    setTimeout(() => { fluff.remove() }, CLOUD_DELAY);
                 } else {
                     setTimeout(() => {
                         fluff.style.height = `${diameter}px`;
@@ -336,12 +337,6 @@
                 position: absolute;
             }
 
-            .sunset {
-                animation-name: sunset;
-                background-image: linear-gradient(#77226600, #77226688, #fc3, #d84, #c00);
-                opacity: 0;
-            }
-
             body, #cloudscape, #starfield, .sunset {
                 animation-direction: alternate;
                 animation-duration: 720s;
@@ -355,6 +350,13 @@
                 overflow: hidden;
                 position: absolute;
                 top: 0;
+            }
+
+            .sunset {
+                animation-name: sunset;
+                animation-direction: normal;
+                background-image: linear-gradient(#77226600, #77226688, #fc3, #d84, #c00);
+                opacity: 0;
             }
 
             #cloudscape {
@@ -387,14 +389,14 @@
                     opacity: 0;
                     top: 100vh;
                 }
-                30% {
+                40% {
                     opacity: 0;
                     top: 100vh;
                 }
                 50% {
                     opacity: 1;
                 }
-                70% {
+                60% {
                     opacity: 0;
                     top: 0;
                 }
