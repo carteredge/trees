@@ -15,7 +15,7 @@
             const FADE = 0.9;
             const MIN_OPACITY = 0.05;
             const GROWTH_DECAY = 0.68;
-            const LEAF_RADIUS = 16;
+            const LEAF_RADIUS = 32;
             const LEAF_SPROUT_RADIUS = 4;
             const LONG_DELAY = 500;
             const MAX_GROWTH = (window.innerHeight ?? window.offsetHeight) * 0.75;
@@ -95,8 +95,8 @@
                         leaf.style.left = `${SEED_RADIUS - LEAF_SPROUT_RADIUS}px`;
                         tree.append(leaf);
                         setTimeout(() => {
-                            leaf.style.width = "32px";
-                            leaf.style.height = "32px";
+                            leaf.style.width = `${LEAF_RADIUS * 2}px`;
+                            leaf.style.height = `${LEAF_RADIUS * 2}px`;
                             leaf.style.bottom = `${SEED_RADIUS - LEAF_RADIUS}px`;
                             leaf.style.left = `${SEED_RADIUS - LEAF_RADIUS}px`;
                         }, SHORT_DELAY);
@@ -106,8 +106,8 @@
                         leaf.style.left = `${SEED_RADIUS - LEAF_SPROUT_RADIUS}px`;
                         tree.append(leaf);
                         setTimeout(() => {
-                            leaf.style.width = "32px";
-                            leaf.style.height = "32px";
+                            leaf.style.width = `${LEAF_RADIUS * 2}px`;
+                            leaf.style.height = `${LEAF_RADIUS * 2}px`;
                             leaf.style.top = `${SEED_RADIUS - LEAF_RADIUS}px`;
                             leaf.style.left = `${SEED_RADIUS - LEAF_RADIUS}px`;
                         }, SHORT_DELAY);
@@ -117,8 +117,8 @@
                         leaf.style.right = `${SEED_RADIUS - LEAF_SPROUT_RADIUS}px`;
                         tree.append(leaf);
                         setTimeout(() => {
-                            leaf.style.width = "32px";
-                            leaf.style.height = "32px";
+                            leaf.style.width = `${LEAF_RADIUS * 2}px`;
+                            leaf.style.height = `${LEAF_RADIUS * 2}px`;
                             leaf.style.top = `${SEED_RADIUS - LEAF_RADIUS}px`;
                             leaf.style.right = `${SEED_RADIUS - LEAF_RADIUS}px`;
                         }, SHORT_DELAY);
@@ -129,8 +129,8 @@
                         leaf.style.left = `${SEED_RADIUS - LEAF_SPROUT_RADIUS}px`;
                         tree.append(leaf);
                         setTimeout(() => {
-                            leaf.style.width = "32px";
-                            leaf.style.height = "32px";
+                            leaf.style.width = `${LEAF_RADIUS * 2}px`;
+                            leaf.style.height = `${LEAF_RADIUS * 2}px`;
                             leaf.style.top = `${SEED_RADIUS - LEAF_RADIUS}px`;
                             leaf.style.left = `${SEED_RADIUS - LEAF_RADIUS}px`;
                         }, SHORT_DELAY);
@@ -168,8 +168,8 @@
                 const pageRoot = document.getElementById("page-root");
                 const seed = document.createElement("div");
                 seed.className = "seed";
-                seed.style.bottom = `${window.innerHeight - event.offsetY - SEED_RADIUS}px`;
-                seed.style.left = `${event.offsetX - SEED_RADIUS}px`;
+                seed.style.bottom = `${window.innerHeight - event.clientY - SEED_RADIUS}px`;
+                seed.style.left = `${event.clientX - SEED_RADIUS}px`;
                 pageRoot.appendChild(seed);
                 setTimeout(() => {
                     seed.style.bottom = "0";
