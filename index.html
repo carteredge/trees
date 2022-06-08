@@ -5,6 +5,9 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
     </head>
     <body>
+        <div id="starfield"></div>
+        <div class="sunset"></div>
+        <div id="cloudscape"></div>
         <div id="page-root">
             <h1>Click to plant trees.</h1>
             <span>(Refresh to start over.)</span>
@@ -12,10 +15,10 @@
         
         <script>
             const BRANCH_DENSITY = 150;
-            const CLOUD_DELAY = 32000;
-            const CLOUD_INTERVAL_MAX = 5000;
-            const CLOUD_INTERVAL_MIN = 500;
-            const CLOUD_FLOOR = (window.innerHeight ?? window.offsetHeight) * 0.4;
+            const CLOUD_DELAY = 60000;
+            const CLOUD_INTERVAL_MAX = 10000;
+            const CLOUD_INTERVAL_MIN = 2000;
+            const CLOUD_FLOOR = (window.innerHeight ?? window.offsetHeight) * 0.3;
             const CLOUD_MAX_RADIUS = 100;
             const CLOUD_MIN_RADIUS = 10;
             const CLOUD_SIDE = (window.innerWidth ?? window.offsetWidth) * 0.2;
@@ -29,6 +32,20 @@
             const MIN_GROWTH = 50;
             const SEED_RADIUS = 8;
             const SHORT_DELAY = 50;
+            const STAR_MAX_RADIUS = 8;
+            const STAR_MIN_RADIUS = 2;
+
+            function addStar() {
+                const starfield = document.getElementById("starfield");
+                const star = document.createElement("div");
+                star.className = "star";
+                const diameter = Math.random() * (STAR_MAX_RADIUS - STAR_MIN_RADIUS) + STAR_MIN_RADIUS;
+                star.style.width = `${diameter}px`;
+                star.style.height = `${diameter}px`;
+                star.style.top = `${Math.round(Math.random() * starfield.offsetHeight - diameter / 2)}px`;
+                star.style.left = `${Math.round(Math.random() * starfield.offsetWidth - diameter / 2)}px`;
+                starfield.append(star);
+            }
 
             function fadeForest() {
                 const flora = document.querySelectorAll("h1, span, .seed");
@@ -44,7 +61,7 @@
                 parentDiameter = parentDiameter || CLOUD_MAX_RADIUS * 2;
 
                 const isRoot = !cloud;
-                cloud = cloud ?? document.getElementById("page-root");
+                cloud = cloud ?? document.getElementById("cloudscape");
 
                 const left = isRoot ?
                     cloud.offsetWidth - CLOUD_SIDE * Math.random() :
@@ -52,7 +69,7 @@
                 const fluff = document.createElement("div");
                 fluff.className = "cloud";
                 const diameter = Math.random() * Math.min(parentDiameter, CLOUD_MAX_RADIUS * 2);
-                fluff.style.top = `${Math.min(Math.random() * (isRoot ? cloud.offsetHeight : parentDiameter) - diameter / 2, CLOUD_FLOOR)}px`;
+                fluff.style.top = `${Math.random() * Math.min((isRoot ? cloud.offsetHeight : parentDiameter) - diameter / 2, CLOUD_FLOOR)}px`;
                 fluff.style.left = `${left}px`;
                 if (isRoot) {
                     setTimeout(() => {
@@ -246,13 +263,22 @@
                 }, SHORT_DELAY);
             }
 
+            function populateStarField() {
+                for (let i = 50; i--;)
+                    addStar();
+            }
+
             document.getElementById("page-root").addEventListener("click", plantSeed);
 
-            fluffCloud();
+            window.addEventListener("load", () => {
+                fluffCloud();
+                populateStarField();
+            });
         </script>
 
         <style>
             body {
+                animation-name: day-night-cycle;
                 background-color: #bdf;
             }
 
@@ -287,12 +313,12 @@
                 position: absolute;
                 transition: height 2s ease-out 0s,
                     width 2s ease-out 0s,
-                    opacity 16s ease-in 0s,
-                    left 32s linear 0s;
+                    opacity 30s ease-in 0s,
+                    left 60s linear 0s;
             }
 
             .cloud .cloud {
-                opacity: 0.8;
+                opacity: 1;
             }
 
             .leaf {
@@ -304,13 +330,74 @@
                 width: 8px;
             }
 
-            #page-root {
+            .star {
+                background-color: #eda;
+                border-radius: 50%;
+                position: absolute;
+            }
+
+            .sunset {
+                animation-name: sunset;
+                background-image: linear-gradient(#77226600, #77226688, #fc3, #d84, #c00);
+                opacity: 0;
+            }
+
+            body, #cloudscape, #starfield, .sunset {
+                animation-direction: alternate;
+                animation-duration: 720s;
+                animation-iteration-count: infinite;
+            }
+
+            #cloudscape, #page-root, #starfield, .sunset {
                 bottom: 0;
                 left: 0;
                 right: 0;
                 overflow: hidden;
                 position: absolute;
                 top: 0;
+            }
+
+            #cloudscape {
+                animation-name: cloud-day-night;
+            }
+
+            #starfield {
+                animation-name: star-fade;
+                opacity: 0;
+            }
+
+            @keyframes cloud-day-night {
+                from {opacity: 1}
+                to {opacity: .5}
+            }
+
+            @keyframes day-night-cycle {
+                from {background-color: #bdf}
+                to {background-color: #123}
+            }
+
+            @keyframes star-fade {
+                50% {opacity: 0}
+                70% {opacity: 1}
+                100% {opacity: 1}
+            }
+
+            @keyframes sunset {
+                0% {
+                    opacity: 0;
+                    top: 100vh;
+                }
+                30% {
+                    opacity: 0;
+                    top: 100vh;
+                }
+                50% {
+                    opacity: 1;
+                }
+                70% {
+                    opacity: 0;
+                    top: 0;
+                }
             }
         </style>
     </body>
